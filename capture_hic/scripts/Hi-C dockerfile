@@ -1,0 +1,138 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PATH="/opt/anaconda/bin:$PATH"
+
+# Base system + tools
+RUN apt-get update && apt-get install -y \
+    wget curl unzip git perl build-essential \
+    g++ gcc gfortran make pkg-config \
+    zlib1g-dev libbz2-dev liblzma-dev \
+    libcurl4-gnutls-dev libssl-dev libxml2-dev \
+    libncurses5-dev ca-certificates locales \
+    tzdata software-properties-common \
+    default-jre libreadline-dev libx11-dev libxt-dev \
+    bowtie2 bc \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Locale
+RUN locale-gen en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
+
+# Install Anaconda (Python 3 + R-related tooling path convenience)
+RUN curl -O https://repo.anaconda.com/archive/Anaconda3-2019.07-Linux-x86_64.sh && \
+    bash Anaconda3-2019.07-Linux-x86_64.sh -b -p /opt/anaconda && \
+    rm Anaconda3-2019.07-Linux-x86_64.sh
+
+# Install system R and libraries
+RUN apt-get update && apt-get install -y \
+    r-base \
+    libxml2-dev \
+    libssl-dev \
+    libcurl4-openssl-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install core R helpers first
+RUN Rscript -e 'install.packages(c("BiocManager","remotes"), repos="https://cloud.r-project.org")'
+
+# Install CRAN packages that are still available directly and compatible enough
+RUN Rscript -e 'install.packages(c("assertthat","prettyunits","praise"), repos="https://cloud.r-project.org")'
+
+# Install archived CRAN packages needed for old R 3.6.3 compatibility
+RUN Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/htmltools/htmltools_0.4.0.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/htmlwidgets/htmlwidgets_1.5.1.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/rprojroot/rprojroot_1.3-2.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/desc/desc_1.2.0.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/ellipsis/ellipsis_0.3.1.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/vctrs/vctrs_0.2.4.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/pillar/pillar_1.4.4.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/stringi/stringi_1.4.6.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/stringr/stringr_1.4.0.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/htmlTable/htmlTable_1.13.3.tar.gz", repos=NULL, type="source")'
+
+# Install archived packages for testthat / ggplot2 dependency chain
+RUN Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/ps/ps_1.3.2.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/processx/processx_3.4.2.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/callr/callr_3.4.3.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/pkgbuild/pkgbuild_1.0.8.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/pkgload/pkgload_1.1.0.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/testthat/testthat_2.3.2.tar.gz", repos=NULL, type="source")'
+
+# Install archived packages for ggplot2 / Hmisc / Chicago dependency chain
+RUN Rscript -e 'install.packages(c("farver","labeling","munsell","crayon","fansi","pkgconfig","utf8"), repos="https://cloud.r-project.org")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/isoband/isoband_0.2.1.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/scales/scales_1.1.1.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/tibble/tibble_3.0.1.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_3.3.3.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/viridis/viridis_0.6.1.tar.gz", repos=NULL, type="source")' && \
+    Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/Hmisc/Hmisc_4.3-1.tar.gz", repos=NULL, type="source")'
+
+# Install Bioconductor packages
+RUN Rscript -e 'BiocManager::install(c("Rsamtools","Chicago"), ask=FALSE, update=FALSE)'
+    Rscript -e 'install.packages("argparse", repos="https://cloud.r-project.org")'
+
+# Install deeptools via conda
+RUN /opt/anaconda/bin/conda install -y -c bioconda deeptools && \
+    /opt/anaconda/bin/conda clean -afy
+
+# Install bedtools 2.25
+RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.25.0/bedtools-2.25.0.tar.gz && \
+    tar -xzf bedtools-2.25.0.tar.gz && \
+    cd bedtools2 && make && cp bin/* /usr/local/bin && \
+    cd .. && rm -rf bedtools2* bedtools-2.25.0.tar.gz
+
+# Install HTSlib 1.10.2
+RUN wget https://github.com/samtools/htslib/releases/download/1.10.2/htslib-1.10.2.tar.bz2 && \
+    tar -xjf htslib-1.10.2.tar.bz2 && \
+    cd htslib-1.10.2 && ./configure --prefix=/usr/local && make && make install && \
+    cd .. && rm -rf htslib-1.10.2*
+
+# Install samtools 1.10
+RUN wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2 && \
+    tar -xjf samtools-1.10.tar.bz2 && \
+    cd samtools-1.10 && ./configure --prefix=/usr/local && make && make install && \
+    cd .. && rm -rf samtools-1.10*
+
+# Install bcftools 1.10.2
+RUN wget https://github.com/samtools/bcftools/releases/download/1.10.2/bcftools-1.10.2.tar.bz2 && \
+    tar -xjf bcftools-1.10.2.tar.bz2 && \
+    cd bcftools-1.10.2 && ./configure --prefix=/usr/local && make && make install && \
+    cd .. && rm -rf bcftools-1.10.2*
+
+# Install HiCUP
+RUN wget https://github.com/StevenWingett/HiCUP/archive/refs/tags/v0.8.0.tar.gz && \
+    tar -xzf v0.8.0.tar.gz && \
+    mv HiCUP-0.8.0 /opt/hicup && \
+    rm v0.8.0.tar.gz
+
+# Install Arima CHiC pipeline
+RUN git clone https://github.com/ArimaGenomics/CHiC.git /opt/arima && \
+    cd /opt/arima && \
+    tar -xzf chicagoTools.tar.gz && \
+    chmod +x Arima-CHiC-v1.5.sh
+
+# Optional sanity check so build fails early if Chicago is missing
+RUN Rscript -e 'library(Chicago); library(Rsamtools); library(Hmisc); sessionInfo()'
+
+# README inside container
+RUN echo "\
+Arima CHiC Docker Image (updated)\n\
+================================\n\
+- HiCUP:        /opt/hicup\n\
+- Arima-CHiC:   /opt/arima\n\
+- Entry Point:  /bin/bash\n\
+\n\
+Run the Arima pipeline using:\n\
+bash /opt/arima/Arima-CHiC-v1.5.sh [options]\n\
+\n\
+Mount your FASTQ and design files to /data:\n\
+docker run -it --rm -v \$(pwd):/data arima-chic\n\
+" > /README.txt
+
+# Set working directory
+WORKDIR /data
+
+# Default shell
+CMD ["/bin/bash"]

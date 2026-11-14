@@ -1,0 +1,4 @@
+# Start docker interactively
+docker run -it -v "$PWD/reference":/data/reference -w /data/reference arima-chic bash
+  # Generate diget file
+  /opt/hicup/hicup_digester --genome hg38 --arima /data/reference/hg38.fa
