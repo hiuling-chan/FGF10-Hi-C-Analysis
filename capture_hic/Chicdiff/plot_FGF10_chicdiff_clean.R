@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# FGF10 targeted plots from EXISTING Chicdiff tests and exact fragment-pair tables.
+# FGF10 targeted plots from existing Chicdiff tests and exact fragment-pair tables.
 # Arima nominal ~3-kb Capture Hi-C design. NO differential tests rerun.
 # Run extract_FGF10_bait_TSVs.py first to generate portable source TSVs.
 # All custom plots can be recreated from the exported TSVs alone.
@@ -7,7 +7,7 @@
 
 suppressPackageStartupMessages(library(ggplot2))
 
-root <- '/nfs/volume2/Hi-C_3kb/chicdiff_results/differential'
+root <- 'file.path'
 tables <- file.path(root, 'FGF10_tables')
 output <- file.path(root, 'FGF10_clean_plots')
 dir.create(output, recursive = TRUE, showWarnings = FALSE)
@@ -15,7 +15,7 @@ dir.create(output, recursive = TRUE, showWarnings = FALSE)
 prefix <- 'IMR_vs_Lymph'
 results_rds <- file.path(root, paste0(prefix, '_results.Rds'))
 counts_rds <- file.path(root, paste0(prefix, '_countput.Rds'))
-baitmap <- '/nfs/volume2/Hi-C_3kb/reference/hg38_chicago_input_3kb_1.baitmap'
+baitmap <- 'file.path/hg38_chicago_input_3kb_1.baitmap'
 exact_tsv <- file.path(tables, 'FGF10_exact_SNP_fragment_pairs_counts_scores.tsv')
 regions_tsv <- file.path(tables, 'FGF10_all_3_baits_SNP_overlap.tsv')
 snp <- 43619485L
@@ -145,7 +145,7 @@ if (file.exists(regions_tsv)) {
            subtitle='Red dashed line: chr5:43,619,485; overlapping test windows are not independent loops',
            x='Genomic position on chr5 (GRCh38)',y=NULL)
     save_plot(p_regions,'FGF10_SNP_Chicdiff_all_three_baits_regions.png',13.7,7.5)
-    # Preserve the familiar single-bait 282953 plot for comparison to the prior figure.
+    # Preserve the familiar single-bait 282953 plot.
     single <- z[z$baitID==282953,,drop=FALSE]
     if (nrow(single)) {
       single$region <- factor(as.character(single$region),
