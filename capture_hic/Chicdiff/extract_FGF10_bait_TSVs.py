@@ -4,8 +4,8 @@
 Requires Python 3 standard library only. Does NOT rerun statistics.
 
 Default inputs:
-  /nfs/volume2/Hi-C_3kb/chicdiff_results/differential/IMR_vs_Lymph_full_results.tsv
-  /nfs/volume2/genome-wide_Hi-C/annotations/fgf10_anchor_audit/
+  file.path/IMR_vs_Lymph_full_results.tsv
+  file.path/fgf10_anchor_audit/
       06_all_candidate_fragment_chicago_scores_counts.tsv
 
 The exact-pair source is optional: it is original per-replicate CHiCAGO
@@ -17,8 +17,8 @@ import csv
 import sys
 from pathlib import Path
 
-ROOT = Path('/nfs/volume2/Hi-C_3kb/chicdiff_results/differential')
-DEFAULT_EXACT = Path('/nfs/volume2/genome-wide_Hi-C/annotations/fgf10_anchor_audit/06_all_candidate_fragment_chicago_scores_counts.tsv')
+ROOT = Path('file.path/chicdiff_results/differential')
+DEFAULT_EXACT = Path('file.path/annotations/fgf10_anchor_audit/06_all_candidate_fragment_chicago_scores_counts.tsv')
 SNP_POS = 43619485  # rs78368856, hg38, one-based genomic position
 SNP_FRAGMENT = 282709
 PROMOTER = {282949, 282950}
