@@ -1,1 +1,0 @@
-awk '$NF >= 7' IMR2.bedpe > IMR2_highconf.bedpe
