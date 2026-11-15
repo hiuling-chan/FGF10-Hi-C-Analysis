@@ -3,7 +3,7 @@ Platform: x86_64-conda-linux-gnu
 Running under: Ubuntu 24.04.4 LTS
 
 Matrix products: default
-BLAS/LAPACK: /home/pawels-lab/micromamba/envs/chicdiff/lib/libopenblasp-r0.3.34.so;  LAPACK version 3.12.0
+BLAS/LAPACK: .../micromamba/envs/chicdiff/lib/libopenblasp-r0.3.34.so;  LAPACK version 3.12.0
 
 locale:
  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
