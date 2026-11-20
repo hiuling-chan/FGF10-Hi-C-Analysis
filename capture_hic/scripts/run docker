@@ -1,8 +1,0 @@
-docker run \
-  --user $(id -u):$(id -g) \
-  -v "$PWD/samples":/data/samples \
-  -v "$PWD/reference":/data/reference \
-  -v "$PWD/output":/data/output \
-  -v "$PWD/run_all_samples.sh":/run_all_samples.sh \
-  arima-chic:v1.5-final \
-  bash /run_all_samples.sh
