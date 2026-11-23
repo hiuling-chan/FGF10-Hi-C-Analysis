@@ -28,10 +28,7 @@ Coordinates are from the hg38 Arima `.rmap` and `.baitmap` files and the assayed
 | File | What it contains |
 |---|---|
 | `FGF10_all_3_baits_all.tsv` | Every tested region for baits 282949, 282950, 282953 |
-| `FGF10_proximal_bait282953_all.tsv` | Every tested region for promoter-proximal bait 282953 |
 | `FGF10_all_3_baits_SNP_overlap.tsv` | Combined SNP-overlapping regions for all three baits |
-| `FGF10_exact_SNP_fragment_pairs_counts_scores.tsv` | **Single ~3-kb other-end fragment pair** scores and raw counts (four replicates × three baits)|
-| `FGF10_bait_and_SNP_fragment_annotations.tsv` | Coordinates and explanations of 282709, 282949, 282950, 282953 |
 
 The statistical result columns include `log2FoldChange`, `pvalue`, `padj`, and `weighted_padj`. A small adjusted p-value supports a **between-cell-type difference in a genomic interaction region**.
 
