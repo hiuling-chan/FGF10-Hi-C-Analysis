@@ -1,5 +1,0 @@
-baitID	annotation	chr	baitStart	baitEnd	description
-282949	FGF10 promoter-overlapping bait A	chr5	44384622	44388806	Overlaps assayed FGF10 promoter interval chr5:44,388,434-44,390,361 at its left edge
-282950	FGF10 promoter-overlapping bait B	chr5	44388807	44392024	Overlaps assayed FGF10 promoter interval chr5:44,388,434-44,390,361
-282953	FGF10 promoter-proximal bait	chr5	44398564	44401751	Located downstream of the specified promoter interval; not promoter-overlapping
-282709	SNP-containing OTHER-END fragment (not a captured bait)	chr5	43616691	43619914	Contains rs78368856 at chr5:43,619,485 (GRCh38); compare to promoter and proximal baits
