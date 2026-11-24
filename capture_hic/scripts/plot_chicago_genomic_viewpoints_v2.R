@@ -1,11 +1,10 @@
 #!/usr/bin/env Rscript
 # Standalone plotting of existing Arima/R CHiCAGO analysis objects.
-# DOES NOT rerun HiCUP, bam2chicago, or CHiCAGO.
+# Does not rerun HiCUP, bam2chicago, or CHiCAGO.
 # Requires: R + Bioconductor Chicago (to load chicagoData .Rds objects).
 
 suppressPackageStartupMessages(library(Chicago))
 
-# Configure paths at runtime. Required files are NOT part of this repository.
 args <- commandArgs(trailingOnly = TRUE)
 if (any(args %in% c("-h", "--help"))) {
   cat("Usage: Rscript plot_chicago_genomic_viewpoints_v2.R ",
@@ -78,7 +77,6 @@ score_group <- function(s) {
 COLORS <- c("<3" = "#9AA3AE", "3-<5" = "#396ACA",
             "5-<7" = "#E39135", ">=7" = "#D83A44")
 
-# Change labels here without changing the actual score cutoffs.
 SCORE_LABELS <- c(
   "<3" = "Score <3",
   "3-<5" = "Score 3 to <5 (below cutoff)",
@@ -165,7 +163,6 @@ scatter_plot <- function(d, bait, vp, dispersion, sample) {
   model_ok <- any(is.finite(d$Bmean) & d$Bmean >= 0)
   # CHiCAGO stores the dispersion in cd@params, not cd@settings.
   # The dashed curve is the optional normal approximation used in
-  # HiCExplorer's example, not a CHiCAGO significance threshold.
   upper_ok <- model_ok && length(dispersion) == 1L &&
               is.numeric(dispersion) && is.finite(dispersion) && dispersion > 0
   upper <- if (upper_ok) {
