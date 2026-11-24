@@ -1,18 +1,13 @@
 #!/usr/bin/env python3
 """Generate chr5 genome-wide Hi-C and Capture Hi-C figures (GRCh38/hg38).
 
-This is a path-independent, publication-oriented adaptation of the v7 plotting
-workflow. It reproduces the original figure design for IMR-90 lung fibroblast
-(IMR1/IMR2) and lymphoblast (Lymph1/Lymph2) biological replicates:
-
 - Close view: chr5:42,796,905-44,441,081; balanced Hi-C at 20-kb resolution.
 - Wide view: chr5:42,300,000-46,000,000; balanced Hi-C at 50-kb resolution.
 - Insulation: 20-kb input, 300-kb window.
 - Capture Hi-C arcs: all finite-score cis <=2-Mb pairs from the supplied BEDPE
   files whose BOTH anchors overlap the plotted interval; not bait-restricted.
   Blue: score <5 (including <3); orange: 5 to <7; red: >=7.
-- GENCODE v50 gene spans and optional public CTCF/ATAC-seq tracks.
-- rs78368856 marker (chr5:43,619,485), shown in IMR-90 panels only.
+- GENCODE v50 gene spans and public CTCF tracks.
 
 Required inputs are NOT distributed with this code. This script does not run
 alignment, Cooler balancing, CHiCAGO, or insulation calling; it visualizes their
@@ -31,12 +26,7 @@ Expected Capture Hi-C layout:
     {sample}.cis_le_2Mb.bedpe
 
 Examples:
-  python plot_chr5_hic_all_replicates_v7_public.py --project-root PROJECT_ROOT --capture-root CAPTURE_ROOT --png
-  python plot_chr5_hic_all_replicates_v7_public.py --project-root PROJECT_ROOT --capture-root CAPTURE_ROOT --offline --prepare-only
-
-External annotation files are cached under PROJECT_ROOT/annotations/external_tracks
-by default, independently of the figure output folder. Set --offline to reuse
-only local files and avoid downloads, or --skip-external-tracks to omit them.
+  python plot_fgf10_hic_all_replicates.py --project-root PROJECT_ROOT --capture-root CAPTURE_ROOT --png
 """
 from __future__ import annotations
 
@@ -65,19 +55,10 @@ SAMPLES = {
     'Lymph1': ('Lymph-1', 'Lymphoblast replicate 1'),
     'Lymph2': ('Lymph-2', 'Lymphoblast replicate 2'),
 }
-# gene labels to keep on the plot (simplified span track, not full transcript models)
+# gene labels to keep on the plot
 GENES = ('ANXA2R', 'ZNF131', 'NIM1K', 'HMGCS1', 'CCL28',
          'TMEM267', 'PAIP1', 'NNT', 'FGF10')
-
-# Optional publicly accessible regulatory annotation tracks.
-# URLs and ENCODE file accessions are included for reproducibility.
-ATAC_TRACKS = (
-    ('IMR-90 ATAC-seq\nHighRes', 'https://huvec.s3.us-east-2.amazonaws.com/ATACseq/IMR90HighRes.bw', 'bigwig', '#1f4e79'),
-    ('HUVEC ATAC-seq\nHighRes', 'https://huvec.s3.us-east-2.amazonaws.com/ATACseq/HUVECHighRes.bw', 'bigwig', '#2a7f62'),
-    ('Placenta ATAC-seq\nHighRes', 'https://huvec.s3.us-east-2.amazonaws.com/ATACseq/placentaHighRes.bw', 'bigwig', '#8c6d31'),
-)
-# For the ENCODE CTCF tracks, we use the accession-based download pattern.
-# If an accession/extension is wrong or unavailable, the script will warn and skip it.
+# ENCODE CTCF tracks
 ENCODE_TRACKS = (
     ('ENCODE CTCF\nlung fibroblast', 'ENCFF777ODE', ('bigBed', 'bb', 'bigWig', 'bw')),
     ('ENCODE CTCF\nIMR-90', 'ENCFF307XFM', ('bigBed', 'bb', 'bigWig', 'bw')),
@@ -114,7 +95,6 @@ def chrom_normalized(s: str) -> str:
 
 
 def safe_download(url: str, dest: Path, timeout: int = 60) -> bool:
-    '''Stream download to disk atomically, never cache incomplete output.'''
     if dest.is_file() and dest.stat().st_size > 0:
         return True
     mkdir(dest.parent)
@@ -133,12 +113,6 @@ def safe_download(url: str, dest: Path, timeout: int = 60) -> bool:
 
 
 def stage_encode_ctcf(accession: str, label: str, cache_dir: Path, *, allow_download: bool = True):
-    '''Get ENCODE BED narrowPeak and extract just chr5 as a simple BED6 track.
-
-    Unlike the previous version, this uses .bed.gz first (correct format for
-    ENCFF777ODE and a sensible candidate for ENCFF307XFM). Never treat an HTML
-    error page or a binary bigBed as if it were tab-separated BED text.
-    '''
     out_bed = cache_dir / f'{accession}.chr5.peaks.bed'
     if out_bed.exists() and out_bed.stat().st_size > 0:
         return out_bed
@@ -365,11 +339,6 @@ def filter_capture_bedpe(source: Path, out_prefix: Path, view: View) -> tuple[di
 def make_ini(ini_path: Path, *, sample_key: str, sample_label: str, view: View,
              cool: Path, arcs_by_bin: dict[str, Path], genes: Path, ins_bg: Path,
              snp_bed: Path, external_tracks: dict[str, tuple[Path, str, str]]) -> None:
-    '''Write a parseable pyGenomeTracks INI with true multiline track titles.
-
-    ConfigParser requires continuation lines to be indented. Section headers
-    remain single line, and only title values are multiline.
-    '''
     sample_short = SAMPLES[sample_key][0]
     is_imr = sample_key.startswith('IMR')
 
@@ -388,8 +357,6 @@ transform = log1p
 colormap = Reds
 show_masked_bins = false
 ''')
-    # Use exactly three score categories. Some samples lack one or more bins;
-    # first nonempty bin MUST start the panel, otherwise it overlays the Hi-C.
     arc_colors = {
         'scorelt5': '#4477CC',  # blue: all scores < 5
         'score5to7': '#E6A044',  # orange: 5 <= score < 7
@@ -439,10 +406,7 @@ height = 1.05
 max_labels = 20
 ''')
     ordered = (
-        'ENCODE CTCF\nlung fibroblast', 'ENCODE CTCF\nIMR-90',
-        'IMR-90 ATAC-seq\nHighRes', 'HUVEC ATAC-seq\nHighRes',
-        'Placenta ATAC-seq\nHighRes',
-    )
+        'ENCODE CTCF\nlung fibroblast', 'ENCODE CTCF\nIMR-90')
     for i, label in enumerate(ordered):
         item = external_tracks.get(label)
         if not item:
@@ -485,7 +449,6 @@ zorder = 20
 ''')
     sections.append('[x-axis]\nfontsize = 7\n')
     ini_path.write_text('\n'.join(sections))
-    # Catch parsing problems before rendering (and before looping samples).
     import configparser
     test = configparser.ConfigParser(interpolation=None, strict=True)
     with ini_path.open() as fh:
@@ -493,11 +456,6 @@ zorder = 20
 
 
 def render(ini: Path, pdf_path: Path, view: View, png: bool) -> None:
-    """Plot using the pyGenomeTracks Python API.
-
-    The wider left scale area is intentional: it keeps the Hi-C color scale
-    labels visible without adding too much extra left whitespace.
-    """
     try:
         from pygenometracks.tracksClass import PlotTracks
         import matplotlib.pyplot as plt
@@ -516,10 +474,6 @@ def render(ini: Path, pdf_path: Path, view: View, png: bool) -> None:
     # left axis / main panel / right-side titles
     plotter.width_ratios = (0.055, 0.855, 0.09)
     fig = plotter.plot(str(pdf_path), CHROM, view.start, view.end)
-
-    # Add the same categorical legend to every plotted Capture Hi-C panel.
-    # A figure using only scores >=5 will contain no blue arcs, but
-    # still show the blue category in the legend for cross-sample comparison.
     import configparser
     from matplotlib.lines import Line2D
     cfg = configparser.ConfigParser(interpolation=None)
@@ -531,8 +485,6 @@ def render(ini: Path, pdf_path: Path, view: View, png: bool) -> None:
             Line2D([0], [0], color='#E6A141', lw=1.2, label='Score 5 to <7'),
             Line2D([0], [0], color='#D62728', lw=1.2, label='Score >=7'),
         ]
-        # Main genomic track axes are wider than the narrow left/right label
-        # columns. Their order follows the INI tracks: Hi-C, arcs, insulation...
         main_axes = [ax for ax in fig.axes if ax.get_position().width > 0.35
                      and abs(ax.get_xlim()[0] - view.start) < 1
                      and abs(ax.get_xlim()[1] - view.end) < 1]
@@ -545,7 +497,6 @@ def render(ini: Path, pdf_path: Path, view: View, png: bool) -> None:
                 bbox_to_anchor=(0.995, 0.995),
             )
         else:
-            # Compatible fallback for differing pyGenomeTracks versions.
             fig.legend(handles=handles, loc='lower center', ncol=3,
                        fontsize=6, frameon=False)
 
