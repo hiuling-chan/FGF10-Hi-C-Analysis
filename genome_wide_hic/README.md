@@ -45,7 +45,7 @@ nextflow run nf-core/hic -r 2.1.0 -profile docker \
 
 The downstream regional figures used **balanced `.cool` matrices** at **20-kb** and **50-kb** resolutions. Chromatin insulation was represented using the **300-kb-window `log2_insulation_score_300000`** column from the sample-specific **20-kb** insulation TSVs. The figure script extracts the chr5 values and writes a temporary bedGraph track; it does not calculate insulation scores from raw Hi-C pairs.
 
-## Figure generation: `plot_chr5_hic_all_replicates.py`
+## Figure generation: plot_chr5_hic_all_replicates.py
 
 The script assembled these layers using the pyGenomeTracks Python API:
 
