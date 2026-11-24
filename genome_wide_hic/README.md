@@ -43,18 +43,9 @@ nextflow run nf-core/hic -r 2.1.0 -profile docker \
   -resume
 ```
 
-The original run also used local Docker/Nextflow software and reference resources, which are not bundled with this repository.
-
 The downstream regional figures used **balanced `.cool` matrices** at **20-kb** and **50-kb** resolutions. Chromatin insulation was represented using the **300-kb-window `log2_insulation_score_300000`** column from the sample-specific **20-kb** insulation TSVs. The figure script extracts the chr5 values and writes a temporary bedGraph track; it does not calculate insulation scores from raw Hi-C pairs.
 
 ## Figure generation: `plot_chr5_hic_all_replicates.py`
-
-The original manuscript figure script was **`plot_fgf10_hic_all_replicates_v7.py`**. It generated integrated chromosome 5 regional views for the four samples:
-
-| View | GRCh38 region | Genome-wide Hi-C bin size | Plotted Hi-C depth |
-| --- | --- | --- | --- |
-| Close | chr5:42,796,905–44,441,081 | 20 kb | 1 Mb |
-| Wide | chr5:42,300,000–46,000,000 | 50 kb | 2 Mb |
 
 The script assembled these layers using the pyGenomeTracks Python API:
 
@@ -64,21 +55,6 @@ The script assembled these layers using the pyGenomeTracks Python API:
 4. **Gene annotations:** simplified gene-span BED tracks derived from GENCODE human release 50 (GRCh38).
 5. **Additional annotations:** public CTCF tracks for lung fibroblasts (ENCFF777ODE) and IMR-90 cells (ENCFF307XFM), and publicly accessible ATAC-seq signal tracks for IMR-90, HUVECs and placenta. External tracks are included only when accessible.
 6. **Variant marker:** a dotted line at rs78368856 was displayed in the IMR1/IMR2 panels by the v7 plotting code. Its selective display is a plotting choice.
-
-### Example figure-generation command
-
-The original script accepts configurable input and output directories:
-
-```bash
-python plot_fgf10_hic_all_replicates.py \
-  --project-root <genome-wide_Hi-C_project> \
-  --capture-root <capture_Hi-C_output> \
-  --gtf <gencode.v50.basic.annotation.gtf.gz> \
-  --outdir <figures/chr5_all_samples> \
-  --png
-```
-
-**Required local inputs:** balanced sample-specific 20-kb and 50-kb Cooler files; sample-specific 20-kb insulation TSVs containing the 300-kb window column; sample-specific Capture Hi-C `cis_le_2Mb.bedpe` files; GENCODE v50 annotation; and accessible external annotation tracks if those tracks are to appear in the figure. The script is provided as analysis provenance and may require path or dependency adjustments in a new environment.
 
 ## Software and references
 
