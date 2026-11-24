@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# Standalone plotting of existing Arima/R CHiCAGO analysis objects.
+# Plotting of existing Arima/R CHiCAGO analysis objects.
 # Does not rerun HiCUP, bam2chicago, or CHiCAGO.
 # Requires: R + Bioconductor Chicago (to load chicagoData .Rds objects).
 
