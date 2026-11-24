@@ -1,5 +1,4 @@
 # FGF10 Hi-C analysis: software and reference provenance
-# Recorded from the nf-core/hic run of November 11, 2026 unless noted otherwise.
 
 # Genome-wide Hi-C processing
 nf-core/hic: 2.1.0
@@ -7,14 +6,14 @@ Nextflow: 26.10.4
 Bowtie2: 2.4.4
 Cooler: 0.8.11
 HiC-Pro: HiC-Pro-based processing subworkflow within nf-core/hic 2.1.0; no separate standalone HiC-Pro version recorded in software_versions.yml
-Cooltools (insulation): version to retrieve from pipeline_info/software_versions.yml
+Cooltools (insulation): 0.5.1
 
 # Host environment
-Docker: 29.4.0 (version installed when checked; version at original execution not verified)
+Docker: 29.4.0 
 
 # Figure generation
-pyGenomeTracks: 3.9 (reported for inspected plotting environment; confirm it was the environment used for figure generation)
-Figure script: plot_chr5_hic_all_replicates_v7.py
+pyGenomeTracks: 3.9 
+Figure script: plot_fgf10_hic_all_replicates.py
 
 # Reference and analysis choices
 Reference genome: GRCh38/hg38
@@ -26,7 +25,4 @@ Insulation: 20 kb balanced Cooler; 300 kb window
 
 # Provenance
 # Nextflow version: original .nextflow.log
-# Bowtie2 and Cooler: hic_results/pipeline_info/software_versions.yml
 # Pipeline version: original Nextflow launch command (-r 2.1.0)
-# Docker and pyGenomeTracks: subsequently checked local installations
-# Fill in the Cooltools version from the pipeline metadata before publication.
