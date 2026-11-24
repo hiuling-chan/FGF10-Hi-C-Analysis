@@ -1,0 +1,5 @@
+sample	processed_input_read_pairs	uniquely_paired_alignments_pct	valid_pairs_pre_dedup	valid_pairs_post_dedup	duplicate_pct_of_valid_pairs	cis_pct_of_postdedup_valid_pairs	trans_pct_of_postdedup_valid_pairs	long_range_cis_gt20kb_pct_of_cis
+IMR-1	805275162	68.99	525191373	319564089	39.15	90.04	9.96	70.96
+IMR-2	890251961	68.82	595460975	361845423	39.23	90.13	9.87	70.36
+Lymph-1	660949635	67.75	420331434	248091215	40.98	84.37	15.63	77.28
+Lymph-2	879531879	67.47	576090344	366873527	36.32	84.36	15.64	76.98
