@@ -1,4 +1,4 @@
-sample	raw_read_pairs	mapped_read_ends_pct	unique_valid_pairs	duplicate_pairs_pct_of_hicup_total	long_range_cis_ge15kb_pct_of_est_unique_total	on_target_valid_pairs_pct
+Sample	raw_read_pairs	mapped_read_ends_pct	unique_valid_pairs	duplicate_pairs_pct_of_hicup_total	long_range_cis_ge15kb_pct_of_est_unique_total	on_target_valid_pairs_pct
 IMR-1	185646339	92.60	32975245	63.90	61.70	7.60
 IMR-2	231389415	92.70	7331926	86.10	58.90	48.90
 Lymph-1	238445647	91.50	8209835	86.80	61.20	32.40
