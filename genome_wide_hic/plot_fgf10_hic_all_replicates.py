@@ -5,7 +5,7 @@
 - Wide view: chr5:42,300,000-46,000,000; balanced Hi-C at 50-kb resolution.
 - Insulation: 20-kb input, 300-kb window.
 - Capture Hi-C arcs: all finite-score cis <=2-Mb pairs from the supplied BEDPE
-  files whose BOTH anchors overlap the plotted interval; not bait-restricted.
+  files whose both anchors overlap the plotted interval; not bait-restricted.
   Blue: score <5 (including <3); orange: 5 to <7; red: >=7.
 - GENCODE v50 gene spans and public CTCF tracks.
 
