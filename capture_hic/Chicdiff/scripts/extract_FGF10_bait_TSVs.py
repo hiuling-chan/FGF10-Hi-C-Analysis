@@ -1,16 +1,5 @@
 #!/usr/bin/env python3
-"""Export reproducible FGF10 promoter/proximal Chicdiff results.
-
-Requires Python 3 standard library only. Does NOT rerun statistics.
-
-Default input (when run from the chicdiff_results directory):
-  differential/IMR_vs_Lymph_full_results.tsv
-
-Specify --analysis-dir if called elsewhere. Use --exact to include per-sample
-CHiCAGO counts/scores from a separately generated TSV.
-
-The exact-pair source is optional: it is original per-replicate CHiCAGO
-counts/scores, not Chicdiff region-level significance.
+"""Export reproducible FGF10 promoter/proximal Chicdiff results. Does not rerun statistics.
 """
 
 import argparse
@@ -54,7 +43,6 @@ def as_int(value):
 
 def overlaps(row):
     # SNP is interior to the source fragment, so BED/1-based edge conventions
-    # do not affect this specific SNP-overlap classification.
     return (row['OEchr'] == 'chr5'
             and as_int(row['OEstart']) <= SNP_POS
             and as_int(row['OEend']) > SNP_POS)
