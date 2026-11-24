@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # Differential Capture Hi-C: IMR-90 (2 replicates) vs lymphoblasts (2 replicates).
 # Arima nominal ~3-kb capture design; cis <=2 Mb peak matrix already prepared.
-# This script runs differential TESTING; it does NOT regenerate CHiCAGO calls,
+# This script runs differential testing; it does not regenerate CHiCAGO calls,
 # .chinput counts, the peak matrix, or genome-wide Hi-C contact matrices.
 # Usage: Rscript run_FGF10_chicdiff.R --root /path/to/Hi-C_3kb [--analysis-dir /path/to/results] [--force]
 
@@ -43,8 +43,8 @@ samples <- c('IMR1', 'IMR2', 'Lymph1', 'Lymph2')
 chicago_path <- function(s) file.path(root, 'output', s, 'chicago', 'data', paste0(s, '.Rds'))
 count_path <- function(s) file.path(root, 'output', s, 'bam2chicago', s, paste0(s, '.chinput'))
 
-# Condition order is IMR then Lymph. DO NOT infer coefficient direction solely
-# from ordering: verify the Chicdiff/DESeq2 contrast before describing log2FC.
+# Condition order is IMR then Lymph. 
+# IMR as the reference condition, with the log2 fold change representing Lymph/IMR. 
 chicagoData <- list(
   IMR = setNames(vapply(samples[1:2], chicago_path, character(1)), samples[1:2]),
   Lymph = setNames(vapply(samples[3:4], chicago_path, character(1)), samples[3:4])
@@ -63,7 +63,6 @@ needed <- c(
 missing <- needed[!file.exists(needed)]
 if (length(missing)) stop('Missing input(s):\n', paste(missing, collapse = '\n'))
 
-# The matrix header must refer to the same sample names as chicagoData/countData.
 header <- names(read.delim(peakfile, sep = '\t', nrows = 1,
                            check.names = FALSE, stringsAsFactors = FALSE))
 if (!all(samples %in% header)) {
