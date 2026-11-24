@@ -21,7 +21,7 @@ Coordinates are from the hg38 Arima `.rmap` and `.baitmap` files and the assayed
 
 1. `scripts/run_FGF10_chicdiff.R` — reproducible **full differential test**, Requires the **existing** peak matrix, CHiCAGO RDS, CHiCAGO `.chinput`, and Arima design references.
 2. `scripts/extract_FGF10_bait_TSVs.py` — from the completed full Chicdiff results, exports all regions involving bait 282949, 282950, and 282953; SNP-overlapping subsets; annotations; and exact per-replicate CHiCAGO fragment-pair counts/scores 
-3. `scripts/plot_FGF10_chicdiff_clean.R` — plots dedicated bait profiles using existing Chicdiff RDS objects; sample-by-sample exact fragment counts/scores; and SNP-overlapping regional differential tests from exported TSVs. 
+3. `scripts/plot_FGF10_chicdiff.R` — plots dedicated bait profiles using existing Chicdiff RDS objects; sample-by-sample exact fragment counts/scores; and SNP-overlapping regional differential tests from exported TSVs. 
 
 ## Exported TSVs
 
@@ -31,6 +31,7 @@ Coordinates are from the hg38 Arima `.rmap` and `.baitmap` files and the assayed
 | `FGF10_all_3_baits_SNP_overlap.tsv` | Combined SNP-overlapping regions for all three baits |
 
 The statistical result columns include `log2FoldChange`, `pvalue`, `padj`, and `weighted_padj`. A small adjusted p-value supports a **between-cell-type difference in a genomic interaction region**.
+DESeq2 used IMR as the reference condition, with the log2 fold change representing Lymph/IMR. Consequently, negative log2 fold changes indicate higher interaction frequencies in IMR-90 fibroblasts, whereas positive values indicate higher interaction frequencies in lymphoblasts.
 
 ## References
 
