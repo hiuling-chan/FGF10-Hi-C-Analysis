@@ -7,7 +7,6 @@
 
 suppressPackageStartupMessages(library(ggplot2))
 
-# Paths are supplied when running the script, not baked into GitHub code.
 # Run from chicdiff_results/ or pass --analysis-dir /path/to/chicdiff_results.
 args <- commandArgs(trailingOnly = TRUE)
 if (any(args %in% c('--help', '-h'))) {
@@ -59,13 +58,10 @@ save_plot <- function(plot, file, width, height) {
 
 # A: Native Chicdiff mirrored mean profiles (one FGF10-associated bait per file).
 # The statistical model uses IMR1/IMR2 and Lymph1/Lymph2 independently.
-# The native profile is a group-aggregated display, NOT four separate profiles.
 if (all(file.exists(c(results_rds, counts_rds, baitmap))) &&
     requireNamespace('Chicdiff', quietly = TRUE)) {
   for (id in names(native_names)) {
     path <- file.path(output, native_names[[id]])
-    # Open the device, explicitly draw plotDiffBaits() return value,
-    # close device, and only then report successful output.
     png(path, width = 1900, height = 1250, res = 180, bg = 'white')
     tryCatch({
       p <- Chicdiff::plotDiffBaits(results_rds, counts_rds, baitmap,
@@ -136,7 +132,6 @@ if (file.exists(exact_tsv)) {
 }
 
 # C: SNP-overlapping Chicdiff region-level statistics for all 3 baits.
-# Multiple overlapping windows per bait share counts; NOT independent loops.
 if (file.exists(regions_tsv)) {
   z <- read.delim(regions_tsv, sep='\t', check.names=FALSE, stringsAsFactors=FALSE)
   req <- c('baitID','regionID','OEchr','OEstart','OEend','log2FoldChange','weighted_padj')
