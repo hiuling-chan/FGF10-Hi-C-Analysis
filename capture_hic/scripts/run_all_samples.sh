@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # Portable wrapper for the original three Arima-CHiC v1.5 stages.
 # Local sequencing data, design references, and installation are not distributed.
-# No automatic deletion of HiCUP intermediate outputs or overwrite detection.
 set -euo pipefail
 
 usage() {
